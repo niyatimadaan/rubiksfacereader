@@ -2,7 +2,8 @@ import cv2
 import numpy as np
 from imutils import contours
 
-original = cv2.imread('images/img3.jpg')
+original = cv2.imread('images/OYFN2.png')
+original2=cv2.copyMakeBorder(original,0,0,0,0,cv2.BORDER_REPLICATE)
 image = cv2.cvtColor(original, cv2.COLOR_BGR2HSV)
 mask = np.zeros(image.shape, dtype=np.uint8)
 mask2 = np.zeros(image.shape, dtype=np.uint8)
@@ -13,8 +14,8 @@ colors = {
     'yellow': ([20, 100, 100], [30, 255, 255]),     #3
     'orange': ([0, 110, 125], [17, 255, 255]),      #4
     'red': ([170, 70, 50], [180, 255, 255]),        #5
-    'green': ([25, 52, 72], [102,255, 255]),        #6
-    'white':([0, 0, 0],[0, 0, 255])                 #7
+#    'green': ([25, 52, 72], [102,255, 255]),        #6
+#    'white':([0, 0, 80],[37, 170 , 255])            #7
     }
 
 # Color threshold to find the squares
@@ -26,7 +27,7 @@ for color, (lower, upper) in colors.items():
     color_mask = cv2.inRange(image, lower, upper)
     color_mask = cv2.morphologyEx(color_mask, cv2.MORPH_OPEN, open_kernel, iterations=1)
     color_mask = cv2.morphologyEx(color_mask, cv2.MORPH_CLOSE, close_kernel, iterations=5)
-
+    print(color)
     color_mask = cv2.merge([color_mask, color_mask, color_mask])
     mask = cv2.bitwise_or(mask, color_mask)
 
@@ -80,6 +81,7 @@ for color, (lower, upper) in colors.items():
     row2 = []
     if len(conts)==1:
         x,y,w,h = cv2.boundingRect(c)
+        cv2.putText(original2, color, (x,y - 5), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (255,255,255), 2)
         distance.append((x,y,colorno))
     
     elif len(conts)!=1:
@@ -116,6 +118,7 @@ for i in range(0,9):
 print(arr)   
 cv2.imshow('mask', mask)
 cv2.imwrite('mask.png', mask)
+cv2.imwrite('output/original.png', original)
 cv2.imshow('original', original)
 
 cv2.waitKey(0)
